@@ -1,78 +1,62 @@
-const std = @import("std");
 const engine = @import("./engine.zig");
+const menu = @import("./menu.zig");
 
 pub const ApiVersion = 6;
 
-// this is intended for storing data for the whole UI session
-var arena: std.heap.ArenaAllocator = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-var allocator: std.mem.Allocator = arena.allocator;
-
-pub fn init() usize {
-    engine.printlnF("ZIG UI Initialising {}.", .{ 99 });
+pub fn init() isize {
+    engine.printlnF("ZIG UI Initialising {}.", .{99});
 
     return 0;
 }
 
-pub fn shutdown() usize {
+pub fn shutdown() isize {
     engine.println("ZIG UI shut down.");
 
-    arena.deinit();
+    menu.shutdown();
 
     return 0;
 }
 
-pub fn keyEvent(key: c_int) usize {
+pub fn keyEvent(key: c_int) isize {
     _ = key;
     return 0;
 }
 
-pub fn mouseEvent(dx: c_int, dy: c_int) usize {
+pub fn mouseEvent(dx: c_int, dy: c_int) isize {
     _ = dx;
     _ = dy;
     return 0;
 }
 
-pub fn refresh( time: c_int ) usize {
+pub fn refresh(time: c_int) isize {
     _ = time;
     return 0;
 }
 
-pub fn isFullscreen() usize {
-    return 0;
+pub fn isFullscreen() isize {
+    return 1;
 }
 
-fn setMainMenu() usize {
-    return 0;
-}
+pub fn setActiveMenu(menuType: c_int) isize {
+    const mt = @intToEnum(UiMenuCommand_t, menuType);
 
-pub fn setActiveMenu( menu: c_int ) usize {
-    const menuType = @intToEnum(UiMenuCommand_t, menu);
-
-    const ret = switch (menuType) {
+    const ret = switch (mt) {
         .UIMENU_NONE => 0,
-        .UIMENU_MAIN => setMainMenu(),
+        .UIMENU_MAIN => menu.setMenu("main"),
         else => 0,
     };
 
     return ret;
 }
 
-const UiMenuCommand_t = enum(c_int) {
-    UIMENU_NONE,
-    UIMENU_MAIN,
-    UIMENU_INGAME,
-    UIMENU_NEED_CD,
-    UIMENU_BAD_CD_KEY,
-    UIMENU_TEAM,
-    UIMENU_POSTGAME
-};
+const UiMenuCommand_t = enum(c_int) { UIMENU_NONE, UIMENU_MAIN, UIMENU_INGAME, UIMENU_NEED_CD, UIMENU_BAD_CD_KEY, UIMENU_TEAM, UIMENU_POSTGAME };
 
-pub fn consoleCommand(realtime: c_int) usize {
+pub fn consoleCommand(realtime: c_int) isize {
     _ = realtime;
     return 0;
 }
 
-pub fn drawConnectScreen( overlay: c_int) usize {
+pub fn drawConnectScreen(overlay: c_int) isize {
     _ = overlay;
     return 0;
 }

@@ -5,8 +5,7 @@ export fn dllEntry(syscallptr: usize) void {
     engine.setSyscallptr(syscallptr);
 }
 
-export fn vmMain(command: c_int, arg0: c_int, arg1: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int) usize {
-
+export fn vmMain(command: c_int, arg0: c_int, arg1: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int, _: c_int) isize {
     const cmd = @intToEnum(UiExport_t, command);
     const ret = switch (cmd) {
         .UI_GETAPIVERSION => ui.ApiVersion,
