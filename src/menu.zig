@@ -8,7 +8,6 @@ const Urc = []const u8;
 var menuCache = std.StringHashMap(Urc).init(&arena.allocator);
 var menuStack = std.ArrayList(*Urc).init(&arena.allocator);
 
-// const Vec3 = struct { x: f32, y: f32, z: f32 };
 
 pub fn setMenu(name: []const u8) isize {
     pushMenu(name) catch return -1;
@@ -24,13 +23,17 @@ pub fn shutdown() void {
 pub fn pushMenu(name: []const u8) !void {
     const cacheEntry = try menuCache.getOrPut(name);
     if (cacheEntry.found_existing == false) {
-        cacheEntry.value_ptr.* = loadUrc(name);
+        cacheEntry.value_ptr.* = try loadUrc(name);
     }
 
     try menuStack.append(cacheEntry.value_ptr);
-    engine.println(name);
+    engine.println(cacheEntry.value_ptr.*);
 }
 
-fn loadUrc(name: []const u8) Urc {
-    return name;
+fn loadUrc(name: []const u8) !Urc {
+    var file = try engine.File.open(name);
+    defer file.close();
+
+    const urc = try file.read();
+    return urc;
 }
